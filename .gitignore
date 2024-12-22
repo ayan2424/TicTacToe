@@ -1,0 +1,38 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Production build
+/build
+
+# Cache files
+/.cache
+/.next
+/out
+
+# Logs
+logs
+*.log
+yarn.lock
+
+# IDE-related files
+*.idea
+*.vscode
+*.swp
+
+# System files
+.DS_Store
+Thumbs.db
