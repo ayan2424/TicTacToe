@@ -1,5 +1,5 @@
 body {
-  background-color: #121212;
+  background-color: black;
   color: #ffffff;
   font-family: Arial, sans-serif;
   margin: 0;
@@ -22,9 +22,9 @@ body {
 .menu button,
 .difficulty-selection button,
 .result button {
-  background-color: #1f1f1f;
+  background-color: #f307ef;
   color: #ffffff;
-  border: 1px solid #444;
+  border: 1px solid #5117a2;
   padding: 10px 20px;
   margin: 10px;
   cursor: pointer;
@@ -33,7 +33,7 @@ body {
 .menu button:hover,
 .difficulty-selection button:hover,
 .result button:hover {
-  background-color: #333;
+  background-color: #5117a2;
 }
 
 .board {
@@ -66,5 +66,178 @@ body {
 }
 
 .dark-mode {
-  background-color: #121212;
+  background-color: black;
+}
+/* General styling */
+
+/* General Styles */
+.app {
+  font-family: Arial, sans-serif;
+  text-align: center;
+  color: #fff;
+  background-color: black;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Logo Styling */
+.logo {
+  width: 240px;
+  margin: 20px auto;
+}
+
+/* Preloader */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Game Board */
+.game-board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  grid-gap: 10px;
+  margin: 20px auto;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background: #444;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  cursor: pointer;
+  color: #fff;
+  border: 2px solid #666;
+}
+
+.cell.disabled {
+  cursor: not-allowed;
+}
+
+/* Buttons */
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  margin: 10px;
+  cursor: pointer;
+  background-color: #f307ef;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+button:hover {
+  background-color: #5117a2;
+}
+.preloader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: #2c2c2c;
+}
+
+.preloader img {
+  width: 100px;
+  height: 100px;
+}
+
+.menu,
+.difficulty-selection,
+.high-scores,
+.game {
+  text-align: center;
+  color: #ffffff;
+}
+
+
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(3, 100px);
+  gap: 10px;
+  justify-content: center;
+  margin: 20px auto;
+}
+
+.cell {
+  width: 100px;
+  height: 100px;
+  background-color: #1e1e1e;
+  border: 2px solid #444;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.cell.X {
+  color: #ff5733;
+}
+
+.cell.O {
+  color: #3498db;
+}
+
+.result {
+  margin: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 10px;
+  background-color: #444;
+  border: none;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #666;
+}
+
+.reset-button {
+  background-color: #c0392b;
+}
+
+.reset-button:hover {
+  background-color: #e74c3c;
+}
+
+h2{
+  color: #5117a2;
+  font-size: 22px;
+  font-weight: bold;
+}
+ul{
+  background: linear-gradient(125deg, #5117a2, #f307ef);
+  width: 200px;
+  border-radius: 15px;
+}
+.menu{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+.difficulty-selection{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }

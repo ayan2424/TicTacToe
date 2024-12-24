@@ -6,18 +6,42 @@ const App = () => {
   const [difficulty, setDifficulty] = useState("");
   const [currentLevel, setCurrentLevel] = useState(1);
   const [currentScore, setCurrentScore] = useState(0);
-  const [highScores, setHighScores] = useState({ easy: 0, medium: 0, hard: 0 });
+  const [highScores, setHighScores] = useState({
+    easy: 0,
+    medium: 0,
+    hard: 0,
+  });
   const [board, setBoard] = useState(Array(9).fill(null));
   const [isXNext, setIsXNext] = useState(true);
   const [winner, setWinner] = useState(null);
+  const [xColor, setXColor] = useState("#FF5733"); // Default X color
+  const [oColor, setOColor] = useState("#3498DB"); // Default O color
 
-  // AI opponent for computer's move
+  const randomColor = () =>
+    `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+  useEffect(() => {
+    const savedScores = JSON.parse(localStorage.getItem("ticTacToeHighScores"));
+    if (savedScores) {
+      setHighScores(savedScores);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("ticTacToeHighScores", JSON.stringify(highScores));
+  }, [highScores]);
+
+  const resetHighScores = () => {
+    const resetScores = { easy: 0, medium: 0, hard: 0 };
+    setHighScores(resetScores);
+    localStorage.setItem("ticTacToeHighScores", JSON.stringify(resetScores));
+  };
+
   const computerMove = () => {
     const availableMoves = board
       .map((cell, index) => (cell === null ? index : null))
       .filter((val) => val !== null);
 
-    // Simple AI: Random move
     if (availableMoves.length > 0) {
       const randomIndex =
         availableMoves[Math.floor(Math.random() * availableMoves.length)];
@@ -34,7 +58,6 @@ const App = () => {
     }
   }, [isXNext, winner]);
 
-  // Determine the winner
   useEffect(() => {
     const winningCombinations = [
       [0, 1, 2],
@@ -60,7 +83,6 @@ const App = () => {
     }
   }, [board]);
 
-  // Handle player move
   const handleClick = (index) => {
     if (board[index] || winner || !isXNext) return;
 
@@ -70,49 +92,44 @@ const App = () => {
     setIsXNext(false);
   };
 
-  // Handle winning and level progression
   useEffect(() => {
     if (winner === "X") {
-      setTimeout(() => {
-        setCurrentLevel((prevLevel) => prevLevel + 1);
-        setCurrentScore((prevScore) => prevScore + 10); // Add 10 points for each win
-        resetGame();
-      }, 2000); // 2 seconds delay to show the result
-    } else if (winner === "draw") {
-      setTimeout(() => {
-        resetGame(); // Reset the same level
-      }, 2000); // 2 seconds delay
+      if (currentScore > highScores[difficulty]) {
+        setHighScores((prevHighScores) => ({
+          ...prevHighScores,
+          [difficulty]: currentScore,
+        }));
+      }
     }
-  }, [winner]);
+  }, [winner, currentScore, highScores, difficulty]);
 
-  // Handle game over and update high score
-  useEffect(() => {
-    if (currentScore > highScores[difficulty]) {
-      setHighScores((prevHighScores) => ({
-        ...prevHighScores,
-        [difficulty]: currentScore,
-      }));
-    }
-  }, [currentScore, difficulty]);
-
-  // Reset game
-  const resetGame = () => {
+  const retryLevel = () => {
     setBoard(Array(9).fill(null));
     setIsXNext(true);
     setWinner(null);
   };
 
-  // Start a new game
-  const startNewGame = () => {
+  const nextLevel = () => {
+    setCurrentLevel((prevLevel) => prevLevel + 1);
+    setCurrentScore((prevScore) => prevScore + 10);
+    setBoard(Array(9).fill(null));
+    setIsXNext(true);
+    setWinner(null);
+    setXColor(randomColor()); // Change X color
+    setOColor(randomColor()); // Change O color
+  };
+
+  const resetGame = () => {
     setCurrentScore(0);
     setCurrentLevel(1);
+    setXColor(randomColor()); // Reset X color
+    setOColor(randomColor()); // Reset O color
     setBoard(Array(9).fill(null));
     setWinner(null);
     setIsXNext(true);
     setGameState("difficulty");
   };
 
-  // Render Menu
   const renderMenu = () => (
     <div className="menu">
       <h1 className="title">Tic Tac Toe</h1>
@@ -121,13 +138,15 @@ const App = () => {
     </div>
   );
 
-  // Render Difficulty Selection
   const renderDifficultySelection = () => (
     <div className="difficulty-selection">
       <h2>Select Difficulty</h2>
       <button onClick={() => selectDifficulty("easy")}>Easy</button>
       <button onClick={() => selectDifficulty("medium")}>Medium</button>
       <button onClick={() => selectDifficulty("hard")}>Hard</button>
+      <button className="back-button" onClick={() => setGameState("menu")}>
+        Back to Main Menu
+      </button>
     </div>
   );
 
@@ -136,7 +155,6 @@ const App = () => {
     setGameState("game");
   };
 
-  // Render Game Board
   const renderGame = () => (
     <div className="game">
       <h2>
@@ -148,6 +166,7 @@ const App = () => {
             key={index}
             className={`cell ${cell}`}
             onClick={() => handleClick(index)}
+            style={{ color: cell === "X" ? xColor : cell === "O" ? oColor : "" }}
           >
             {cell}
           </div>
@@ -156,16 +175,20 @@ const App = () => {
       {winner && (
         <div className="result">
           {winner === "draw" ? (
-            <h3>It's a draw! Restarting the same level...</h3>
+            <h3>It's a draw! Retry the same level...</h3>
           ) : (
-            <h3>Congratulations! Moving to Level {currentLevel + 1}...</h3>
+            <h3>Congratulations! You won!</h3>
           )}
+          <button onClick={retryLevel}>Retry Level</button>
+          {winner !== "draw" && <button onClick={nextLevel}>Next Level</button>}
         </div>
       )}
+      <button className="back-button" onClick={() => setGameState("menu")}>
+        Back to Main Menu
+      </button>
     </div>
   );
 
-  // Render High Scores
   const renderHighScores = () => (
     <div className="high-scores">
       <h2>High Scores</h2>
@@ -174,11 +197,15 @@ const App = () => {
         <li>Medium: {highScores.medium}</li>
         <li>Hard: {highScores.hard}</li>
       </ul>
-      <button onClick={() => setGameState("menu")}>Back to Menu</button>
+      <button onClick={resetHighScores} className="reset-button">
+        Reset High Scores
+      </button>
+      <button className="back-button" onClick={() => setGameState("menu")}>
+        Back to Main Menu
+      </button>
     </div>
   );
 
-  // Render based on game state
   return (
     <div className="app dark-mode">
       {gameState === "menu" && renderMenu()}
