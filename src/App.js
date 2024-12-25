@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import "./App.css";
 
 const App = () => {
+  const [isAppLoading, setIsAppLoading] = useState(true); // For the initial preloader
+  const [isScreenLoading, setIsScreenLoading] = useState(false); // For the "Start Game" preloader
   const [gameState, setGameState] = useState("menu"); // menu, game, highScores
   const [difficulty, setDifficulty] = useState("");
   const [currentLevel, setCurrentLevel] = useState(1);
@@ -19,6 +21,13 @@ const App = () => {
 
   const randomColor = () =>
     `#${Math.floor(Math.random() * 16777215).toString(16)}`;
+
+  useEffect(() => {
+    // Simulate the app's initial loading
+    setTimeout(() => {
+      setIsAppLoading(false);
+    }, 2000); // Change the duration as needed (2 seconds here)
+  }, []);
 
   useEffect(() => {
     const savedScores = JSON.parse(localStorage.getItem("ticTacToeHighScores"));
@@ -119,21 +128,18 @@ const App = () => {
     setOColor(randomColor()); // Change O color
   };
 
-  const resetGame = () => {
-    setCurrentScore(0);
-    setCurrentLevel(1);
-    setXColor(randomColor()); // Reset X color
-    setOColor(randomColor()); // Reset O color
-    setBoard(Array(9).fill(null));
-    setWinner(null);
-    setIsXNext(true);
-    setGameState("difficulty");
+  const startGame = () => {
+    setIsScreenLoading(true); // Show the second preloader
+    setTimeout(() => {
+      setIsScreenLoading(false);
+      setGameState("difficulty");
+    }, 2000); // 2-second loading time before showing difficulty selection
   };
 
   const renderMenu = () => (
     <div className="menu">
       <h1 className="title">Tic Tac Toe</h1>
-      <button onClick={() => setGameState("difficulty")}>Start Game</button>
+      <button onClick={startGame}>Start Game</button>
       <button onClick={() => setGameState("highScores")}>View High Scores</button>
     </div>
   );
@@ -154,6 +160,23 @@ const App = () => {
     setDifficulty(level);
     setGameState("game");
   };
+
+  const renderHighScores = () => (
+    <div className="high-scores">
+      <h2>High Scores</h2>
+      <ul>
+        <li>Easy: {highScores.easy}</li>
+        <li>Medium: {highScores.medium}</li>
+        <li>Hard: {highScores.hard}</li>
+      </ul>
+      <button onClick={resetHighScores} className="reset-button">
+        Reset High Scores
+      </button>
+      <button className="back-button" onClick={() => setGameState("menu")}>
+        Back to Main Menu
+      </button>
+    </div>
+  );
 
   const renderGame = () => (
     <div className="game">
@@ -189,29 +212,24 @@ const App = () => {
     </div>
   );
 
-  const renderHighScores = () => (
-    <div className="high-scores">
-      <h2>High Scores</h2>
-      <ul>
-        <li>Easy: {highScores.easy}</li>
-        <li>Medium: {highScores.medium}</li>
-        <li>Hard: {highScores.hard}</li>
-      </ul>
-      <button onClick={resetHighScores} className="reset-button">
-        Reset High Scores
-      </button>
-      <button className="back-button" onClick={() => setGameState("menu")}>
-        Back to Main Menu
-      </button>
-    </div>
-  );
-
   return (
     <div className="app dark-mode">
-      {gameState === "menu" && renderMenu()}
-      {gameState === "difficulty" && renderDifficultySelection()}
-      {gameState === "game" && renderGame()}
-      {gameState === "highScores" && renderHighScores()}
+      {isAppLoading ? (
+        <div className="loader">
+          <img src="/preloader1.gif" alt="Loading..." />
+        </div>
+      ) : isScreenLoading ? (
+        <div className="loader">
+          <img src="/preloader2.gif" alt="Loading..." />
+        </div>
+      ) : (
+        <>
+          {gameState === "menu" && renderMenu()}
+          {gameState === "difficulty" && renderDifficultySelection()}
+          {gameState === "game" && renderGame()}
+          {gameState === "highScores" && renderHighScores()}
+        </>
+      )}
     </div>
   );
 };
