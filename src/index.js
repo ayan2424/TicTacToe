@@ -14,11 +14,15 @@ ReactDOM.render(
 );
 
 // Register the service worker
-serviceWorkerRegistration.register({
-  onUpdate: () => {
-    alert('New version available! Update now?');
-    if (confirm('New version available! Update now?')) {
-      window.location.reload();
-    }
-  }
-});
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js').then(
+      (registration) => {
+        console.log('ServiceWorker registered: ', registration);
+      },
+      (error) => {
+        console.log('ServiceWorker registration failed: ', error);
+      }
+    );
+  });
+}
